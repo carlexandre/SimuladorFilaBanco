@@ -6,6 +6,10 @@ typedef struct node{
     Fila* prata;
     Fila* bronze;
     Fila* leezu;
+    int* tempo_caixas;
+    int qntd_caixas;
+    int delta_t;
+    int n_1, n_2, n_3, n_4, n_5;
 }Escalonador;
 
 void e_inicializar (Escalonador *e, int caixas, int delta_t, int n_1, int n_2, int n_3, int n_4, int n_5);
