@@ -89,7 +89,7 @@ int f_consultar_proximo_valor (Fila *f){
 }
 
 // Retorna o número de elementos presentes na fila.
-int f_num_elementos (Fila *f){
+int f_num_elementos (Fila **f){
     Fila * inicio = f;
     int count = 0;
 
@@ -103,8 +103,35 @@ int f_num_elementos (Fila *f){
 
 // Retorna a chave do posicao-ésimo elemento da fila. Caso não exista a posição desejada, retornar -1. 
 // A posição se inicia em 1.
-int f_consultar_chave_por_posicao (Fila **f, int posicao);
+int f_consultar_chave_por_posicao (Fila **f, int posicao) {
+    Fila * temp = *f; 
+    int cont = 1;
+    while (temp != NULL || cont < posicao) {
+        temp = temp->prox;
+        cont++;
+    }
+    // caso tenha chegado ao final, e o contador nao chegou na posicao desejada, retorna -1.
+    if (temp == NULL) return -1;
+    // caso tenha chegado exatamente na posicao desejada
+    if (cont == posicao) 
+        if (temp == NULL ) return -1; // caso aquela posicao seja nula
+        else return temp->chave;    // caso nao seja null, retorna a chave daquele no
+}
 
 // Retorna o valor do posicao-ésimo elemento da fila. Caso não exista a posição desejada, retornar -1. 
 // A posição se inicia em 1.
-int f_consultar_valor_por_posicao (Fila **f, int posicao);
+int f_consultar_valor_por_posicao (Fila **f, int posicao) {
+    Fila * temp = *f; 
+    int cont = 1;
+    while (temp != NULL || cont < posicao) {
+        temp = temp->prox;
+        cont++;
+    }
+    // caso seja fila vazia ou tenha chegado ao final e o contador nao chegou na posicao desejada, retorna -1.
+    if (temp == NULL) return -1;
+    // caso tenha chegado exatamente na posicao desejada
+    if (cont == posicao) {
+        if (temp == NULL ) return -1; // caso aquela posicao seja nula, retorna -1.
+        else return temp->valor; // caso nao seja null, retorna a chave daquele no.
+    }   
+}
