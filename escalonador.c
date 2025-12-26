@@ -56,7 +56,7 @@ int e_obter_prox_num_conta(Escalonador *e) {
     switch (e->fila_atual) {
         case 1:
             if (e->contagem_atual < e->n_1) { // Verifica se ainda pode atender mais clientes dessa fila
-                conta = f_obter_proxima_chave(e->premium);
+                conta = f_obter_proxima_chave(&e->premium);
             }
             if (conta != -1) { // Se conseguiu atender um cliente dessa fila
                 e->contagem_atual++;
@@ -69,7 +69,7 @@ int e_obter_prox_num_conta(Escalonador *e) {
 
         case 2:
             if (e->contagem_atual < e->n_2) {
-                conta = f_obter_proxima_chave(e->ouro);
+                conta = f_obter_proxima_chave(&e->ouro);
             }
             if (conta != -1) {
                 e->contagem_atual++;
@@ -82,7 +82,7 @@ int e_obter_prox_num_conta(Escalonador *e) {
 
         case 3:
             if (e->contagem_atual < e->n_3) {
-                conta = f_obter_proxima_chave(e->prata);
+                conta = f_obter_proxima_chave(&e->prata);
             }
             if (conta != -1) {
                 e->contagem_atual++;
@@ -95,7 +95,7 @@ int e_obter_prox_num_conta(Escalonador *e) {
 
         case 4:
             if (e->contagem_atual < e->n_4) {
-                conta = f_obter_proxima_chave(e->bronze);
+                conta = f_obter_proxima_chave(&e->bronze);
             }
             if (conta != -1) {
                 e->contagem_atual++;
@@ -108,7 +108,7 @@ int e_obter_prox_num_conta(Escalonador *e) {
 
         case 5:
             if (e->contagem_atual < e->n_5) {
-                conta = f_obter_proxima_chave(e->leezu);
+                conta = f_obter_proxima_chave(&e->leezu);
             }
             if (conta != -1) {
                 e->contagem_atual++;
@@ -174,7 +174,7 @@ int e_consultar_prox_num_conta (Escalonador *e){
 // Retorna a quantidade de operações bancárias que o próximo cliente das filas pretende realizar com o caixa,
 // sem retirá-lo da sua respectiva fila.
 int e_consultar_prox_qtde_oper (Escalonador *e){
-     if (e_consultar_qtde_clientes(e) == 0) return -1;
+    if (e_consultar_qtde_clientes(e) == 0) return -1;
 
     int fila_temp = e->fila_atual;
     int contagem_temp = e->contagem_atual;
@@ -219,10 +219,42 @@ int e_consultar_prox_qtde_oper (Escalonador *e){
 };
 
 // Retorna a próxima fila que será atendida de acordo com a Disciplina de Atendimento.
-int e_consultar_prox_fila (Escalonador *e);
+int e_consultar_prox_fila (Escalonador *e){
+    if (e_consultar_qtde_clientes(e) == 0) return -1;
+
+    int fila = e->fila_atual;
+    int disciplina[5] = {e->n_1, e->n_2, e->n_3, e->n_4, e->n_5};
+    Fila *f[5] = {e->premium, e->ouro, e->prata, e->bronze, e->leezu};
+
+    // Verifica se a fila atual ainda pode ser retornada
+    if (f_num_elementos(f[fila-1]) != 0 && e->contagem_atual < disciplina[fila-1])
+        return fila;
+
+    // Caso contrário, procura a próxima fila válida
+    int voltas = 0;
+    while(voltas < 5){
+        fila++;
+
+        if (fila > 5) fila = 1;
+        if (f_num_elementos(f[fila-1]) != 0 && disciplina[fila-1] > 0)
+            return fila;
+
+        voltas++;
+    }
+
+    return -1; // Nenhuma fila encontrada - ERRO
+}
 
 // Retorna a quantidade total (soma) de clientes esperando atendimento em todas as filas.
-int e_consultar_qtde_clientes (Escalonador *e);
+int e_consultar_qtde_clientes (Escalonador *e){
+    int total = 0;
+    total += f_num_elementos(e->premium);
+    total += f_num_elementos(e->ouro);
+    total += f_num_elementos(e->prata);
+    total += f_num_elementos(e->bronze);
+    total += f_num_elementos(e->leezu);
+    return total;
+};
 
 // Retorna o tempo necessário para que o próximo cliente a ser atendido realize todas as operações financeiras
 // que deseja, sem retirá-lo da sua respectiva fila. Retornar -1 caso não tenha nenhum cliente em todas as filas.

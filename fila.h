@@ -17,7 +17,7 @@ int f_consultar_proxima_chave (Fila *f);
 
 int f_consultar_proximo_valor (Fila *f);
 
-int f_num_elementos (Fila **f);
+int f_num_elementos (Fila *f);
 
 int f_consultar_chave_por_posicao (Fila **f, int posicao);
 

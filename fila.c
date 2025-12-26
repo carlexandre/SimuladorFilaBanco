@@ -89,7 +89,7 @@ int f_consultar_proximo_valor (Fila *f){
 }
 
 // Retorna o número de elementos presentes na fila.
-int f_num_elementos (Fila **f){
+int f_num_elementos (Fila *f){
     Fila * inicio = f;
     int count = 0;
 
