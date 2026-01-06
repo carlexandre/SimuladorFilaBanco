@@ -258,11 +258,65 @@ int e_consultar_qtde_clientes (Escalonador *e){
 
 // Retorna o tempo necessário para que o próximo cliente a ser atendido realize todas as operações financeiras
 // que deseja, sem retirá-lo da sua respectiva fila. Retornar -1 caso não tenha nenhum cliente em todas as filas.
-int e_consultar_tempo_prox_cliente (Escalonador *e);
+int e_consultar_tempo_prox_cliente (Escalonador *e) {
+    int qtde_ops = e_consultar_prox_qtde_oper(e);
+
+    if (qtde_ops == -1) {
+        return -1;
+    }
+
+    return qtde_ops * e->delta_t;
+}
 
 // Realiza a configuração de inicialização do escalonador através da leitura do arquivo de configuração de nome
 // “nome_arq_conf”, retornando 1 em caso de sucesso e 0 caso contrário.
-int e_conf_por_arquivo (Escalonador *e, char *nome_arq_conf);
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "escalonador.h"
+
+int e_conf_por_arquivo (Escalonador *e, char *nome_arq_conf){
+    FILE *file = fopen(nome_arq_conf, "r");
+    if (file == NULL) {
+        return 0; // Falha ao abrir o arquivo
+    }
+
+    int caixas, delta_t, n_1, n_2, n_3, n_4, n_5;
+
+    // O fscanf precisa incluir o texto exato que está no arquivo para ignorá-lo e pegar só os %d
+    if (fscanf(file, "qtde de caixas = %d\n", &caixas) != 1) { fclose(file); return 0; }
+
+    if (fscanf(file, "delta t = %d\n", &delta_t) != 1) { fclose(file); return 0; }
+    
+    if (fscanf(file, "disciplina de escalonamento = {%d,%d,%d,%d,%d}\n", 
+               &n_1, &n_2, &n_3, &n_4, &n_5) != 5) { fclose(file); return 0; }
+
+    e_inicializar(e, caixas, delta_t, n_1, n_2, n_3, n_4, n_5);
+
+    // Formato: Premium - conta 755816 - 3 operacao(oes)
+    char classe_str[20];
+    int conta, ops;
+
+    // O loop continua enquanto conseguir ler o padrão de linha dos clientes
+    while (fscanf(file, "%19s - conta %d - %d operacao(oes)\n", classe_str, &conta, &ops) == 3) {
+        int classe_id = 0;
+
+        // Converte a string da classe para o número correspondente
+        if (strcmp(classe_str, "Premium") == 0) classe_id = 1;
+        else if (strcmp(classe_str, "Ouro") == 0) classe_id = 2;
+        else if (strcmp(classe_str, "Prata") == 0) classe_id = 3;
+        else if (strcmp(classe_str, "Bronze") == 0) classe_id = 4;
+        else if (strcmp(classe_str, "Leezu") == 0) classe_id = 5;
+
+        // Se identificou uma classe válida, insere na fila
+        if (classe_id > 0) {
+            e_inserir_por_fila(e, classe_id, conta, ops);
+        }
+    }
+
+    fclose(file);
+    return 1;
+}
 
 // Executar a simulação do atendimento, lendo o arquivo de configuração de nome “nome_arq_in” e escrevendo
 // o resultado do processamento para arquivo de nome “nome_arq_out”.
