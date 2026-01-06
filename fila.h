@@ -1,6 +1,6 @@
 typedef struct node {
     int chave;
-    int valor;
+    int valor; //quantidade de operações
     struct node* prox;
     struct node* ant;
 }Fila;
