@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "escalonador.h"
 #include "fila.h"
 #include "logtree.h"
@@ -267,13 +268,6 @@ int e_consultar_tempo_prox_cliente (Escalonador *e) {
 
     return qtde_ops * e->delta_t;
 }
-
-// Realiza a configuração de inicialização do escalonador através da leitura do arquivo de configuração de nome
-// “nome_arq_conf”, retornando 1 em caso de sucesso e 0 caso contrário.
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "escalonador.h"
 
 int e_conf_por_arquivo (Escalonador *e, char *nome_arq_conf){
     FILE *file = fopen(nome_arq_conf, "r");
