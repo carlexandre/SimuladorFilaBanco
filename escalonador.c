@@ -171,6 +171,7 @@ int e_consultar_prox_num_conta (Escalonador *e){
         if (fila_temp > 5) fila_temp = 1; // Volta para 1 se passar de 5
     }
 }
+
 // Retorna a quantidade de operações bancárias que o próximo cliente das filas pretende realizar com o caixa,
 // sem retirá-lo da sua respectiva fila.
 int e_consultar_prox_qtde_oper (Escalonador *e){
@@ -320,5 +321,7 @@ int e_conf_por_arquivo (Escalonador *e, char *nome_arq_conf){
 
 // Executar a simulação do atendimento, lendo o arquivo de configuração de nome “nome_arq_in” e escrevendo
 // o resultado do processamento para arquivo de nome “nome_arq_out”.
-void e_rodar (Escalonador *e, char *nome_arq_in, char *nome_arq_out);
+void e_rodar (Escalonador *e, char *nome_arq_in, char *nome_arq_out) {
+    
+}
 
