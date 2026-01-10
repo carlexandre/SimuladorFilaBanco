@@ -71,13 +71,11 @@ int e_obter_prox_num_conta (Escalonador *e) {
         Fila **fila = NULL;
         int limite = 0;
 
-        switch (e->fila_atual) {
-            case 1: fila = &e->premium; limite = e->n_1; break;
-            case 2: fila = &e->ouro;    limite = e->n_2; break;
-            case 3: fila = &e->prata;   limite = e->n_3; break;
-            case 4: fila = &e->bronze;  limite = e->n_4; break;
-            case 5: fila = &e->leezu;   limite = e->n_5; break;
-        }
+        if(e->fila_atual == 1) {fila = &e->premium; limite = e->n_1;}
+        else if(e->fila_atual == 2) {fila = &e->ouro; limite = e->n_2;}
+        else if(e->fila_atual == 3) {fila = &e->prata; limite = e->n_3;}
+        else if(e->fila_atual == 4) {fila = &e->bronze; limite = e->n_4;}
+        else if(e->fila_atual == 5) {fila = &e->leezu; limite = e->n_5;}
 
         if (e->contagem_atual < limite) {
             int conta = f_obter_proxima_chave(fila);
@@ -107,13 +105,11 @@ int e_consultar_prox_num_conta (Escalonador *e) {
         Fila *f = NULL;
         int limite = 0;
 
-        switch (fila) {
-            case 1: f = e->premium; limite = e->n_1; break;
-            case 2: f = e->ouro;    limite = e->n_2; break;
-            case 3: f = e->prata;   limite = e->n_3; break;
-            case 4: f = e->bronze;  limite = e->n_4; break;
-            case 5: f = e->leezu;   limite = e->n_5; break;
-        }
+        if(fila == 1) {f = e->premium; limite = e->n_1;}
+        else if(fila == 2) {f = e->ouro; limite = e->n_2;}
+        else if(fila == 3) {f = e->prata; limite = e->n_3;}
+        else if(fila == 4) {f = e->bronze; limite = e->n_4;}
+        else if(fila == 5) {f = e->leezu; limite = e->n_5;}
 
         if (cont < limite) {
             int conta = f_consultar_proxima_chave(f);
@@ -141,13 +137,11 @@ int e_consultar_prox_qtde_oper (Escalonador *e) {
         Fila *f = NULL;
         int limite = 0;
 
-        switch (fila) {
-            case 1: f = e->premium; limite = e->n_1; break;
-            case 2: f = e->ouro;    limite = e->n_2; break;
-            case 3: f = e->prata;   limite = e->n_3; break;
-            case 4: f = e->bronze;  limite = e->n_4; break;
-            case 5: f = e->leezu;   limite = e->n_5; break;
-        }
+        if(fila == 1) {f = e->premium; limite = e->n_1;}
+        else if(fila == 2) {f = e->ouro; limite = e->n_2;}
+        else if(fila == 3) {f = e->prata; limite = e->n_3;}
+        else if(fila == 4) {f = e->bronze; limite = e->n_4;}
+        else if(fila == 5) {f = e->leezu; limite = e->n_5;}
 
         if (cont < limite) {
             int valor = f_consultar_proximo_valor(f);
