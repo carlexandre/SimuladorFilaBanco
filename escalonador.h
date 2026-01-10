@@ -1,6 +1,9 @@
-#include <fila.h>
+#ifndef ESCALONADOR_H
+#define ESCALONADOR_H
 
-typedef struct node{
+#include "fila.h"
+
+typedef struct {
     Fila* premium;
     Fila* ouro;
     Fila* prata;
@@ -10,13 +13,14 @@ typedef struct node{
     int* tempo_caixas;
     int qntd_caixas;
     int delta_t;
+
     int n_1, n_2, n_3, n_4, n_5;
+    int fila_atual;
+    int contagem_atual;
+} Escalonador;
 
-    int fila_atual; //saber qual fila está sendo atendida no momento.
-    int contagem_atual; // saber quantos já foram atendidos na rodada atual daquela fila.
-}Escalonador;
-
-void e_inicializar (Escalonador *e, int caixas, int delta_t, int n_1, int n_2, int n_3, int n_4, int n_5);
+void e_inicializar (Escalonador *e, int caixas, int delta_t,
+                    int n_1, int n_2, int n_3, int n_4, int n_5);
 
 int e_inserir_por_fila (Escalonador *e, int classe, int num_conta, int qtde_operacoes);
 
@@ -35,3 +39,17 @@ int e_consultar_tempo_prox_cliente (Escalonador *e);
 int e_conf_por_arquivo (Escalonador *e, char *nome_arq_conf);
 
 void e_rodar (Escalonador *e, char *nome_arq_in, char *nome_arq_out);
+
+char *e_nome_classe(int classe);
+
+int e_vazio(Escalonador *e);
+
+int e_prox_classe(Escalonador *e);
+
+int e_prox_conta(Escalonador *e);
+
+int e_prox_operacoes(Escalonador *e);
+
+void e_remover(Escalonador *e);
+
+#endif

@@ -1,9 +1,12 @@
-typedef struct node {
+#ifndef FILA_H
+#define FILA_H
+
+typedef struct fila_node {
     int chave;
-    int valor; //quantidade de operações
-    struct node* prox;
-    struct node* ant;
-}Fila;
+    int valor;
+    struct fila_node* prox;
+    struct fila_node* ant;
+} Fila;
 
 void f_inicializar (Fila **f);
 
@@ -19,6 +22,8 @@ int f_consultar_proximo_valor (Fila *f);
 
 int f_num_elementos (Fila *f);
 
-int f_consultar_chave_por_posicao (Fila **f, int posicao);
+int f_consultar_chave_por_posicao (Fila *f, int posicao);
 
-int f_consultar_valor_por_posicao (Fila **f, int posicao);
+int f_consultar_valor_por_posicao (Fila *f, int posicao);
+
+#endif

@@ -1,6 +1,6 @@
+#include "fila.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "fila.h"
 
 // inicializa a fila.
 void f_inicializar (Fila **f){
@@ -9,129 +9,152 @@ void f_inicializar (Fila **f){
 
 // Insere um determinado valor inteiro indexado por um valor de chave na fila. Retorna 1 se a inserção for bem 
 // sucedida e 0 se houver algum problema (duplicação de chave ou falta de memória).
-int f_inserir (Fila **f, int chave, int valor){
-    Fila * inicio = *f;
-    Fila * adicionar = (Fila*) malloc(sizeof(Fila));
+int f_inserir(Fila **f, int chave, int valor) {
+    if (chaveExistente(*f, chave))
+        return 0;
 
-    if(!adicionar) return 0;
-    if(chaveExistente(inicio, chave)) return 0;
+    Fila *novo = malloc(sizeof(Fila));
+    if (!novo)
+        return 0;
 
-    adicionar->chave = chave;
-    adicionar->valor = valor;
+    novo->chave = chave;
+    novo->valor = valor;
 
-    if(Fila_vazia(inicio)){
-        adicionar->ant = adicionar;
-        adicionar->prox = adicionar;
-        *f = adicionar;
+    // Caso 1: fila vazia
+    if (*f == NULL) {
+        novo->prox = novo;
+        novo->ant  = novo;
+        *f = novo;
         return 1;
     }
 
-    adicionar->prox = inicio;
-    adicionar->ant = inicio->ant;
+    // Caso 2: fila com elementos
+    Fila *ultimo = (*f)->ant;
 
-    inicio->ant->prox = adicionar;
-    inicio->ant = adicionar;
+    novo->prox = *f;
+    novo->ant  = ultimo;
+
+    ultimo->prox = novo;
+    (*f)->ant   = novo;
 
     return 1;
 }
 
 // Verifica se existe uma chave com o valor que deseja adicionar na Fila.
-int chaveExistente(Fila *f, int chave){
-    Fila * temp = f;
-    while(temp != NULL){
-        if (temp->chave == chave)
+int chaveExistente(Fila *f, int chave) {
+    if (f == NULL) return 0;
+
+    Fila *aux = f;
+
+    do {
+        if (aux->chave == chave)
             return 1;
-    }
+        aux = aux->prox;
+    } while (aux != f);
+
     return 0;
 }
 
-// Retorna o número de chave do próximo elemento da fila, retirando-o da fila. Retorna -1 se a fila estiver vazia.
-int f_obter_proxima_chave (Fila **f){
-    Fila * inicio = *f;
-    Fila * prox = inicio->prox;
-    Fila * ant = inicio->ant;
-    int chave;
 
-    if (inicio == NULL){
+// Retorna o número de chave do próximo elemento da fila, retirando-o da fila. Retorna -1 se a fila estiver vazia.
+int f_obter_proxima_chave(Fila **f) {
+    if (*f == NULL)
         return -1;
+
+    Fila *inicio = *f;
+    int chave = inicio->chave;
+
+    // Caso 1: apenas um elemento
+    if (inicio->prox == inicio) {
+        free(inicio);
+        *f = NULL;
+        return chave;
     }
 
-    chave = inicio->chave;
+    // Caso 2: mais de um elemento
+    Fila *ultimo = inicio->ant;
+    Fila *novo_inicio = inicio->prox;
 
-    ant->prox = prox;
-    prox->ant = ant;
+    ultimo->prox = novo_inicio;
+    novo_inicio->ant = ultimo;
 
-    *f = prox;
-
+    *f = novo_inicio;
     free(inicio);
 
     return chave;
 }
 
-// Retorna a chave do elemento que está na cabeça da fila, sem retirá-lo da fila.
-int f_consultar_proxima_chave (Fila *f){
-    Fila * inicio = f;
 
-    if (inicio == NULL)
+// Retorna a chave do elemento que está na cabeça da fila, sem retirá-lo da fila.
+int f_consultar_proxima_chave(Fila *f) {
+    if (f == NULL)
         return -1;
-    
-    return inicio->chave;
+
+    return f->chave;
 }
 
 // Retorna o valor armazenado no elemento que está na cabeça da fila, sem retirá-lo da fila.
-int f_consultar_proximo_valor (Fila *f){
-    Fila * inicio = f;
-
-    if (inicio == NULL)
+int f_consultar_proximo_valor(Fila *f) {
+    if (f == NULL)
         return -1;
-    
-    return inicio->valor;
+
+    return f->valor;
 }
 
-// Retorna o número de elementos presentes na fila.
-int f_num_elementos (Fila *f){
-    Fila * inicio = f;
-    int count = 0;
 
-    while(inicio != NULL){
+// Retorna o número de elementos presentes na fila.
+int f_num_elementos(Fila *f) {
+    if (f == NULL)
+        return 0;
+
+    int count = 0;
+    Fila *aux = f;
+
+    do {
         count++;
-        inicio = inicio->prox;
-    }
-    
+        aux = aux->prox;
+    } while (aux != f);
+
     return count;
-};
+}
 
 // Retorna a chave do posicao-ésimo elemento da fila. Caso não exista a posição desejada, retornar -1. 
 // A posição se inicia em 1.
-int f_consultar_chave_por_posicao (Fila **f, int posicao) {
-    Fila * temp = *f; 
+int f_consultar_chave_por_posicao(Fila *f, int posicao) {
+    if (f == NULL || posicao <= 0)
+        return -1;
+
+    Fila *aux = f;
     int cont = 1;
-    while (temp != NULL || cont < posicao) {
-        temp = temp->prox;
+
+    do {
+        if (cont == posicao)
+            return aux->chave;
+
+        aux = aux->prox;
         cont++;
-    }
-    // caso tenha chegado ao final, e o contador nao chegou na posicao desejada, retorna -1.
-    if (temp == NULL) return -1;
-    // caso tenha chegado exatamente na posicao desejada
-    if (cont == posicao) 
-        if (temp == NULL ) return -1; // caso aquela posicao seja nula
-        else return temp->chave;    // caso nao seja null, retorna a chave daquele no
+    } while (aux != f);
+
+    return -1;
 }
+
 
 // Retorna o valor do posicao-ésimo elemento da fila. Caso não exista a posição desejada, retornar -1. 
 // A posição se inicia em 1.
-int f_consultar_valor_por_posicao (Fila **f, int posicao) {
-    Fila * temp = *f; 
+int f_consultar_valor_por_posicao(Fila *f, int posicao) {
+    if (f == NULL || posicao <= 0)
+        return -1;
+
+    Fila *aux = f;
     int cont = 1;
-    while (temp != NULL || cont < posicao) {
-        temp = temp->prox;
+
+    do {
+        if (cont == posicao)
+            return aux->valor;
+
+        aux = aux->prox;
         cont++;
-    }
-    // caso seja fila vazia ou tenha chegado ao final e o contador nao chegou na posicao desejada, retorna -1.
-    if (temp == NULL) return -1;
-    // caso tenha chegado exatamente na posicao desejada
-    if (cont == posicao) {
-        if (temp == NULL ) return -1; // caso aquela posicao seja nula, retorna -1.
-        else return temp->valor; // caso nao seja null, retorna a chave daquele no.
-    }   
+    } while (aux != f);
+
+    return -1;
 }
